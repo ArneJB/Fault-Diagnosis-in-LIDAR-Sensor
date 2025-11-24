@@ -26,7 +26,7 @@ class LaserSensor:
         px=(obstaclePosition[0]-self.position[0])**2
         py=(obstaclePosition[1]-self.position[1])**2
         return math.sqrt(px+py)
-    def senseObstacle(self):
+    def senseObstacle(self,fault_distance,fault_angle):
         data=[]
         #Own position
         x1, y1 = self.position[0], self.position[1]
@@ -45,6 +45,12 @@ class LaserSensor:
                     color=self.map.get_at((x,y)) #Get color of position on line
                     if (color[0],color[1],color[2]) == (0,0,0): #Check if color of pixel is black
                         distance = self.distance((x,y)) #If object found set distance between found object pose and own pose
+                        if fault_distance:
+                            #Introduce a fault by adding an offset to distance
+                            distance += 15.0
+                        if fault_angle:
+                            #Introduce a fault by adding an offset to angle
+                            angle += 0.05
                         output = addUncertainty(distance,angle,self.sigma)
                         output.append(self.position)
                         data.append(output)
