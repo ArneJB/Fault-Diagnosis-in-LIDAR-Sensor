@@ -3,7 +3,7 @@ from scipy.spatial import distance
 from scipy.optimize import least_squares
 import math
 
-def match_points(landmarks,data_points,thershold,radii,ppm):
+def match_points(landmarks,data_points,threshold,radii,ppm):
     associations = []
 
     for i, p in enumerate(data_points):
@@ -12,7 +12,7 @@ def match_points(landmarks,data_points,thershold,radii,ppm):
         dists = dists - np.array(radii) #Subtract radius to match surface distances
         dists = dists / ppm             #Normalize based on pixel distances
         j = np.argmin(dists)
-        if dists[j] < thershold:
+        if dists[j] < threshold:
             associations.append((j,p))  # (point_index, landmark_index, distance)
         else:
             #associations.append((i, None, None,None))  # no match
