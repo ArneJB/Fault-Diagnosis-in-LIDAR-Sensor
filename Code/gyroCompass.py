@@ -14,5 +14,6 @@ class gyroCompass:
         self.sigma = uncertainty
     def psi_measured(self,psi,fault_bias,fault_noise):
         self.psi = psi
-        self.psi = addUncertainty(self.psi,self.sigma+fault_noise)
+        n = self.sigma+fault_noise
+        self.psi = addUncertainty(self.psi,n)
         return self.psi + fault_bias

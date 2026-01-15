@@ -26,17 +26,16 @@ class LaserSensor:
         px=(obstaclePosition[0]-self.position[0])**2
         py=(obstaclePosition[1]-self.position[1])**2
         return math.sqrt(px+py)
-    def senseObstacle(self,fault_distance=False, fault_angle=False):
+    def senseObstacle(self,heading,fault_distance=False, fault_angle=False):
         data=[]
-        robotFramePoints=[]
         #Own position
         x1, y1 = self.position[0], self.position[1]
         #psi = self.position[2]
         #Create a list of angles between 0 and 2pi, 60 values
         for angle in np.linspace(0,2*math.pi, self.resolution, False):
-            #beam_angle = angle + psi
+            beam_angle = angle + heading
             #x2 and y2 are the end points of the line limited by the range of the sensor.
-            x2,y2 = (x1 + self.range * math.cos(angle), y1 - self.range * math.sin(angle))
+            x2,y2 = (x1 + self.range * math.cos(beam_angle), y1 - self.range * math.sin(beam_angle))
             #From each angle point check a set distance untill we reach an object, from 0 to 100
             for i in range(0,100):
                 u = i/100 #u is scaling the line from 0 to 1
@@ -48,12 +47,12 @@ class LaserSensor:
                     color=self.map.get_at((x,y)) #Get color of position on line
                     if (color[0],color[1],color[2]) == (0,0,0): #Check if color of pixel is black
                         distance = self.distance((x,y)) #If object found set distance between found object pose and own pose
-                        # if fault_distance:
-                        #     #Introduce a fault by adding an offset to distance
-                        #     distance += 15.0
-                        # if fault_angle:
-                        #     #Introduce a fault by adding an offset to angle
-                        #     angle += 0.05
+                        if fault_distance:
+                            #Introduce a fault by adding an offset to distance
+                            distance += 200.0 #~2 meter
+                        if fault_angle:
+                            #Introduce a fault by adding an offset to angle
+                            angle += 0.08 #4.5 degrees
                         output = addUncertainty(distance,angle,self.sigma)
                         output.append(self.position)
                         data.append(output)

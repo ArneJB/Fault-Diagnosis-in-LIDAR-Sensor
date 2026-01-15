@@ -42,7 +42,7 @@ class GPS:
 
         speed = math.sqrt(dx*dx + dy*dy) / dt
 
-        if speed < 1.0:        # adjust threshold as needed
+        if speed < 0.2:        # adjust threshold as needed
             cog = None
         else:
             # COG

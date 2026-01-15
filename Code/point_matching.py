@@ -17,26 +17,39 @@ def match_points(landmarks,data_points,threshold,radii,ppm):
         else:
             #associations.append((i, None, None,None))  # no match
             pass
-           
-    #Prints Mismatch between meassured points and landmark pose.
-    #for (i, j, d) in associations:
-    #    if j is not None:
-    #        print(f"Point {i} matched to Landmark {j} (distance = {d:.2f} m)")
-    #    else:
-    #        pass
-            #print(f"Point {i} has no valid match (too far)")
     return associations
 
-def pointCloud_screen_global(sensor_data):
+def match_points_raw(data_points):
+    associations = [] 
+    for i, p in enumerate(data_points):
+        j = np.argmin(0)
+        associations.append((j,p))  # (point_index, landmark_index, distance)
+    return associations
+
+def pointCloud_screen_global(sensor_data,est_pose):
     pts = []
     #d_px is a Distance in pixels
     #a_screen is the angle of the lidar scan it is in screen coordinates
     for d_px, a_screen, shipPose in sensor_data:
-        sx, sy = shipPose
-        xg =  d_px*np.cos(a_screen) + sx
-        yg = -d_px*np.sin(a_screen) + sy  # screen y-down
+        global_angle = est_pose[2] + a_screen
+        #sx, sy = shipPose
+        sx = est_pose[0]
+        sy = est_pose[1] 
+
+        xg =  d_px*np.cos(global_angle) + sx
+        yg = -d_px*np.sin(global_angle) + sy  # screen y-down
         pts.append((xg, yg))
     return np.asarray(pts, float) #Returns x,y point cloud
+
+def pointCloud_body(sensor_data):
+    #    Returns raw LiDAR point cloud in BODY / SENSOR frame.
+    #    x forward, y left (or right depending on your convention)
+    pts = []
+    for d_px, a_screen, _ in sensor_data:
+        xb =  d_px * np.cos(a_screen)
+        yb = -d_px * np.sin(a_screen)  # screen y-down → body y-up
+        pts.append((xb, yb))
+    return np.asarray(pts, float)
 
 def expected_distance(pose,landmark,radius,ppm):
     #Return expected distance between vessel and landmark

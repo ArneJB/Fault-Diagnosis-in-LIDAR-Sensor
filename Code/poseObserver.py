@@ -19,7 +19,8 @@ class PoseObserver:
     Simple nonlinear observer / complementary filter for vessel pose.
 
     State:   x_hat, y_hat, psi_hat in rad
-    Inputs:  u, v, r           - body velocities
+
+    Inputs:  u, v, r           - body velocities (ASSUMED KNOWN)
              x_meas, y_meas    - GPS measurements
              psi_meas          - gyro measurement (rad, same convention as psi_hat)
     """

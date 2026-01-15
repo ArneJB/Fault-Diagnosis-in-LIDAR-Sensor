@@ -18,16 +18,16 @@ class buildEnv:
         self.window = pygame.display.set_mode((self.win_w, self.win_h))  # what you SEE
 
     #
-    def AD2Pos(self,distance,angle,shipPose):
-        x =  distance * math.cos(angle) + shipPose[0]
-        y = -distance * math.sin(angle) + shipPose[1]
+    def AD2Pos(self,distance,angle,shipPose,psi):
+        x =  distance * math.cos(angle+psi) + shipPose[0]
+        y = -distance * math.sin(angle+psi) + shipPose[1]
         return (int(x),int(y))
     
-    def dataStorage(self,data):
+    def dataStorage(self,data,psi):
         #print(len(self.pointCloud)) #Print number of points registered
         self.pointCloud = [] #Reset point cloud
         for element in data:
-            point=self.AD2Pos(element[0],element[1],element[2])
+            point=self.AD2Pos(element[0],element[1],element[2],psi)
             if point not in self.pointCloud:
                 self.pointCloud.append(point)
     

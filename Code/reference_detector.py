@@ -20,13 +20,23 @@ def detect_circle_opencv(image_path):
         minRadius=20,    # ~20 px diameter → 10 px radius
         maxRadius=100
     )
+    
+    landmarks = []
 
     if circles is not None:
-        circles = np.uint16(np.around(circles))
-        x, y, r = circles[0][0]   # first detected circle
-        print("Circle detected at:", (x, y))
-        print("Radius in pixels:", r)
-        return x, y, r
+        #circles = np.squeeze(circles)        
+        #for x, y, r in circles:
+        #    landmarks.append((int(x), int(y), int(r)))
+        circles = np.around(circles[0]).astype(int)   # shape: (N, 3)
+
+        # If you want a single landmark (first / strongest)
+        x, y, r = circles[0]
+
+        #print(f"{len(landmarks)} circles detected:")
+        #for lm in landmarks:
+        #    print(lm)
+
     else:
-        print("No circle detected")
-        return None
+        print("No circles detected")
+
+    return x,y,r
